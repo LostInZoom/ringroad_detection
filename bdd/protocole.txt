@@ -1,0 +1,90 @@
+Objectifs :
+- Construire une base de données postgis
+	- une table des villes avec leur coordonnées géographiques (gdf) et des données non géographiques
+	- une table avec, pour chaque ville, les objets routes associés
+
+mdp pgadmin : Pgadmin32167!
+mdp postgres pour se connecter au serveur pgsql14 : Postgres32167!
+
+0) Installer postgresql : https://www.postgresql.org/download/windows/
+--> bundle avec pgadmin et un truc pour installer postgis au passage
+
+
+### I. Table "cities"
+
+1) Get a list of cities with coordinates
+https://sql.sh/736-base-donnees-villes-francaises (free version)
+--> sélection des colonnes à garder
+--> villes_france_cleaned.csv
+
+2) Import the cities in a postgis table
+--> csv to gdf to postgis
+
+
+### II. Tables about roads
+
+road_types : "motorway", "trunk", "primary", "secondary", "tertiary", "unclassified", "residential", "motorway_link", "trunk_link", "primary_link", "secondary_link", "tertiary_link", "living_street"
+
+1) for each road_types
+- get a gdf from osm using osmnx "geometries_from_point" for each town
+  Param extent : 5000 mètres
+- add a column with the town name so we can filter it easily
+- merge gdfs of the different towns
+- create a table in postgis for the specific road_type
+
+2) eliminate non-linear features
+
+3) assemble all road types in one road table, keeping only main attributes : geom, city_name, highway (=road_type)
+
+
+(
+PROBLEM : it requires a lot of ram to stock the big gdf before creating the table in postgis, so we cannot use this process for all the cities at once
+SOLUTION : Create a table from the beginning and append the collection to the table step by step
+--> PROBLEM : table columns must be defined and forced on the gdf before append
+SOLUTION 1 : keep only the geometry and city_name columns at first
+)
+
+
+
+2) supress all non linear features
+
+
+Problème 26/11/21 : les attributs des différentes routes se traduisent en un très grand nombre de champs, et ils sont hétérogènes en fonction des objets, et si on importe zone par zone, ca pose problème à la bdd car elle il manque des champs dans la table
+
+
+Pour chaque ville, on récupère dans un gdf les routes principales autour dans une emprise, on conserve uniquement les attributs classiques, on ajoute une colonne clé avec la ville, puis on rentre ça dans la db road
+forcer les colonnes de la table
+filtrer données pour avoir que colonnes de la table
+
+
+osmid --> id de l'élément osm
+nom --> nom de la route
+ref --> ref de la route à l'échelle nationale : A8, N162...
+lanes --> nb of lanes
+element_type --> way (we don't want node or relation or area)
+highway --> motorway, trunk, primary...
+maxspeed --> vitesse max
+geometry
+
+motorway : ~autoroutes majeures
+trunk : ~grandes nationales
+primary : ~nationales
+secondary : ~départementales
+tertiary : ~petites départementales
+
+! need préciser quelle colonne est la géométrie dans les fonctions gpd
+
+
+3) Import the gdf in a postgis DB, all roads in the same table, all roads are linked to a city with a key
+
+
+
+installation de osmnx dans un environnement conda "ox": python 3.9
+
+degree = decimal degree
+dms = degree minute second
+grd = grade
+
+tunnel et pont
+
+

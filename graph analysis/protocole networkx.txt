@@ -1,0 +1,28 @@
+1) get gdf of roads for one town from postgis
+
+2) Create graph from gdf for each town
+
+
+https://networkx.org/documentation/stable/tutorial.html
+
+
+note :
+
+networkx graph layout = algorithms de display de nodes
+from lines (roads) to areas with graph : check dual graphs
+
+
+problems :
+fuse the differentes parallel lines
+fuse different segments of the same road ? maybe no need
+
+
+ideas :
+use weighted edges with number of lanes and speed
+
+
+début :
+extraire les cycles des graphs, et tenter quelques filtres
+
+osmnx : encapsule networkX (d'ou les graphs)
+--> parmis algo théorie des graphs il y a calculer les cycles d'un graphe
