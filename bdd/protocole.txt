@@ -1,10 +1,9 @@
 Objectifs :
 - Construire une base de données postgis
 	- une table des villes avec leur coordonnées géographiques (gdf) et des données non géographiques
-	- une table avec, pour chaque ville, les objets routes associés
+	- une table avec, pour chaque ville, les objets routes associés, avec des attributs sélectionnées
+	- (j'ai aussi créé une table par type de route, avec les informations osm complètes au cas ou)
 
-mdp pgadmin : Pgadmin32167!
-mdp postgres pour se connecter au serveur pgsql14 : Postgres32167!
 
 0) Installer postgresql : https://www.postgresql.org/download/windows/
 --> bundle avec pgadmin et un truc pour installer postgis au passage
@@ -46,9 +45,6 @@ SOLUTION 1 : keep only the geometry and city_name columns at first
 
 
 
-2) supress all non linear features
-
-
 Problème 26/11/21 : les attributs des différentes routes se traduisent en un très grand nombre de champs, et ils sont hétérogènes en fonction des objets, et si on importe zone par zone, ca pose problème à la bdd car elle il manque des champs dans la table
 
 
@@ -84,7 +80,4 @@ installation de osmnx dans un environnement conda "ox": python 3.9
 degree = decimal degree
 dms = degree minute second
 grd = grade
-
-tunnel et pont
-
 
